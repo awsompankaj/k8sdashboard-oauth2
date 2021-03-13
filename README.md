@@ -42,7 +42,7 @@ cd k8sdashboard-oauth2
 helm install dashboard . -n <namespace>
 ```
 
-edit ouath2-proxy.ing a net you dashboard host
+edit ouath-ingress.yaml and set your dashboard host
 
 and access the application using github auth
 
