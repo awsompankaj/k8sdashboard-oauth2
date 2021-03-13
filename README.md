@@ -14,7 +14,7 @@ Enter your service a SSL URL as well as a “callback URL” at  the /oauth2 pat
 
 ## install oauth2-proxy
 
-'''bash
+'''sh
 helm install authproxy \
     --namespace=<Namespace> \
     --set config.clientID=<Client ID> \
@@ -26,7 +26,7 @@ helm install authproxy \
 '''
 
 You can create the cookie secret with this little docker invocation:
-'''bash
+'''sh
 docker run -ti --rm python:3-alpine \
     python -c 'import secrets,base64; print(base64.b64encode(base64.b64encode(secrets.token_bytes(16))));'
 '''
@@ -36,7 +36,7 @@ Clone the repo
 git clone https://github.com/awsompankaj/k8sdashboard-oauth2
 cd k8sdashboard-oauth2
 
-'''bash
+'''sh
 helm install dashboard . -n <namespace>
 '''
 
