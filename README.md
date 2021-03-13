@@ -33,7 +33,9 @@ docker run -ti --rm python:3-alpine \
 ## install dashboard
 
 Clone the repo
+
 git clone https://github.com/awsompankaj/k8sdashboard-oauth2
+
 cd k8sdashboard-oauth2
 
 ```sh
