@@ -12,39 +12,20 @@ Create a GitHub OAuth 2 Proxy token either via your org’s GitHub setting page 
 Enter your service a SSL URL as well as a “callback URL” at  the /oauth2 path. For example: https://yourapp.example.com then https://yourapp.example.com/oauth2/callback
 
 
-## install oauth2-proxy
+## install Cert-manager + ouath2-proxy + kubernetes dashboard.
 
-```sh
-helm install authproxy \
-    --namespace=<Namespace> \
-    --set config.clientID=<Client ID> \
-    --set config.clientSecret=<Client Secret> \
-    --set config.cookieSecret=<CookieSecret> \
-    --set extraArgs.provider=github \
-    --set extraArgs.email-domain="*" \
-    stable/oauth2-proxy 
-```
+Run the install install.sh script with 4 arguments.
+
+1) FQDN for dashboard
+2) Client ID
+3) Client Secret
+4) Cookie Secret
 
 You can create the cookie secret with this little docker invocation:
 ```sh
 docker run -ti --rm python:3-alpine \
     python -c 'import secrets,base64; print(base64.b64encode(base64.b64encode(secrets.token_bytes(16))));'
 ```
-## install dashboard
+./install.sh "Hostname" "ClientID" "ClientSecret" "CookieSecret"
 
-Clone the repo
-
-git clone https://github.com/awsompankaj/k8sdashboard-oauth2
-
-cd k8sdashboard-oauth2
-
-```sh
-helm install dashboard . -n <namespace>
-```
-
-edit ouath-ingress.yaml and set your dashboard host
-
-and access the application using github auth
-
-
-
+The script will install cert-manager with selfsiged issuer and kubernetes dashboard with Oauth2-proxy
