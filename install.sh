@@ -7,8 +7,9 @@ if [ "$#" -eq  "0" ] || [ "$#" -ne  "4" ]
      exit 1
  fi
 
-git clone https://github.com/awsompankaj/argocd-install.git
-cd argocd-install
+git clone https://github.com/awsompankaj/k8sdashboard-oauth2.git
+cd k8sdashboard-oauth2
+
 
 which helm
 if [ $(echo $?) != 0 ]
@@ -22,15 +23,18 @@ fi
 kubectl create ns cert-manager
 kubectl create ns dashboard
 
-helm install argocd . -n argocd  --set server.extraArgs={--insecure} --set server.ingress.enabled=true --set server.ingress.hosts={$3} 
-PASS=$(kubectl get pods -n argocd  -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2)
-sleep 30
-argocd login $3 --username admin  --password $PASS --grpc-web  --insecure
-argocd account update-password --account developer --current-password $PASS --new-password $2
-argocd account update-password  --account admin --current-password $PASS --new-password $1
-argocd logout $3
-argocd login $3 --username developer  --password $2 --grpc-web  --insecure
-argocd cluster add --in-cluster kubernetes-admin@kubernetes
 
-cd ..
-rm -rf argocd-install
+##install cert-manager
+cd cert-manager
+helm install cert-manager . --namespace cert-manager  --create-namespace  --set installCRDs=true
+kubectl create -f selfsigned.yaml
+cd ../oauth2-proxy
+
+helm install authproxy . -n dashboard  --set config.clientID=$2 --set config.clientSecret=$3 --set config.cookieSecret=$4 --set extraArgs.provider=github  --set extraArgs.email-domain="*" --set ingress.enabled=true  --set ingress.path=/oauth2     --set ingress.hosts={$1}   --set ingress.tls[0].secretName=oauth-tls --set ingress.tls[1].hosts={$1} 
+
+cd ../dashboard
+
+helm install dashboard . -n dashboard --set ingress.enabled=true  --set ingress.hosts={$1} --set ingress.tls[0].secretName=dashboard-tls --set ingress.tls[1].hosts={$1}
+
+cd ../..
+rm -rf k8sdashboard-oauth2 
