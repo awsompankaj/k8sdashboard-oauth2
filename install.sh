@@ -29,9 +29,11 @@ cd cert-manager
 helm install cert-manager . --namespace cert-manager  --create-namespace  --set installCRDs=true
 kubectl create -f selfsigned.yaml
 cd ../oauth2-proxy
-
+## install authproxy
 helm install authproxy . -n dashboard  --set config.clientID=$2 --set config.clientSecret=$3 --set config.cookieSecret=$4 --set extraArgs.provider=github  --set extraArgs.email-domain="*" --set ingress.enabled=true  --set ingress.path=/oauth2     --set ingress.hosts={$1}   --set ingress.tls[0].secretName=oauth-tls --set ingress.tls[1].hosts={$1} 
 
+
+## install dashboard
 cd ../dashboard
 
 helm install dashboard . -n dashboard --set ingress.enabled=true  --set ingress.hosts={$1} --set ingress.tls[0].secretName=dashboard-tls --set ingress.tls[1].hosts={$1}
